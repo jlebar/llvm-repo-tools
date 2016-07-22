@@ -61,6 +61,11 @@ This script doesn't handle porting subproject repos other than clang.  It also
 assumes that the monorepo has the format of
 https://github.com/llvm-project/llvm-project.
 
+This script spends most of its time looking through the monorepo for the commit
+corresponding to one in the subproject repo.  As an optimization, we could
+compute this once and somehow distribute the mapping (perhaps as part of this
+repository itself).  That would *greatly* speed up conversions.
+
 ## Disclaimer
 
 This is not an official Google project.
