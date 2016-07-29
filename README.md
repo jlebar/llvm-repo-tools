@@ -1,12 +1,23 @@
-# llvm-port-commits
+# llvm-git-tools
 
-This repository contains a tool for moving commits from a single-subproject LLVM
-repo to a multi-subproject LLVM repo.
+Hacky tools for hacking on llvm and using git.
 
-At the moment it's not particularly general or friendly.  Please view this as a
-proof of concept.
+Caution: Edges may be sharp.
 
-## Usage
+## git-llvm-commit-via-svn
+
+Lets you commit upstream from an LLVM git monorepo, by way of a local SVN clone.
+
+Supports commits that span subprojects, so you can e.g. make an atomic change to
+llvm and clang.
+
+See instructions in `git-llvm-commit-via-svn --help`.
+
+## move-to-monorepo-filter
+
+Lets you move commits from a single-subproject LLVM repo to an LLVM monorepo.
+
+### Usage
 
 We need to define some terms:
 
@@ -45,9 +56,10 @@ fork to the monorepo.  We would run the following commands:
     # monorepo.  (The script doesn't care about this branch name, call it
     # whatever you want.)
     $ git checkout -b cheri-clang-master cheri-clang/master
-    $ git filter-branch --parent-filter "python $filter_dir/filter.py parent" \
-      --index-filter "python $filter_dir/filter.py index" cheri-clang-master \
-      ^old-clang/master
+    $ git filter-branch \
+      --parent-filter "$filter_dir/move-to-monorepo-filter parent" \
+      --index-filter "$filter_dir/move-to-monorepo-filter index" \
+      cheri-clang-master ^old-clang/master
 
 The script will run faster if you `pip install pyfscache`, but it's not
 required.
@@ -55,7 +67,7 @@ required.
 The result of running this on the CHERI clang master branch is at
 https://github.com/jlebar/llvm-project/tree/cheri-clang-master.
 
-## Known limitations
+### Known limitations
 
 This script doesn't handle porting subproject repos other than clang.  It also
 assumes that the monorepo has the format of
