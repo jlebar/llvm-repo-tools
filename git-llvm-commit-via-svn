@@ -22,10 +22,9 @@ branch's upstream via "git branch --set-upstream-to".  Not --set-upstream.
 Suggested setup for the svn repo follows.  You only have to do this once.
 
   svn checkout --depth=immediates https://llvm.org/svn/llvm-project/ .
-  svn update cfe/trunk clang-tools-extra/trunk compiler-rt/trunk dragonegg/trunk
-  \
-    klee/trunk libclc/trunk libcxx/trunk libcxxabi/trunk lld/trunk lldb/trunk \
-    llvm/trunk polly/trunk
+  svn update cfe/trunk clang-tools-extra/trunk compiler-rt/trunk  \
+    dragonegg/trunk klee/trunk libclc/trunk libcxx/trunk libcxxabi/trunk \
+    lld/trunk lldb/trunk llvm/trunk polly/trunk
 
 """
 
