@@ -2,7 +2,7 @@
 
 Hacky tools for hacking on llvm and using git.
 
-Caution: Edges may be sharp.
+*Caution: Edges may be sharp.*
 
 ## git-llvm-commit-via-svn
 
