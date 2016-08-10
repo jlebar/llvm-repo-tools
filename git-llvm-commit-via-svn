@@ -172,7 +172,7 @@ def push(svn_repo, rev, dry_run):
   # Now we're ready to commit.
   commit_msg = git('show', '--pretty=%B', '--quiet', rev)
   if not dry_run:
-    svn(svn_repo, 'commit', '-m', commit_msg)
+    print(svn(svn_repo, 'commit', '-m', commit_msg))
     print('Committed %s to svn.' % rev)
   else:
     print("Would have committed %s to svn, if this weren't a dry run." % rev)
