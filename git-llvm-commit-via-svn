@@ -164,10 +164,10 @@ def push(svn_repo, rev, dry_run):
     if line.endswith('.rej') or line.endswith('.orig'):
       raise RuntimeError('patch left a .orig/.rej file in the svn repo: %s.' %
                          line)
-  for line in (l for l in status_lines if l.startswith('?')):
-    svn(svn_repo, 'add', l.split(' ')[1].strip())
-  for line in (l for l in status_lines if l.startswith('!')):
-    svn(svn_repo, 'remove', l.split(' ')[1].strip())
+  for l in (l for l in status_lines if l.startswith('?')):
+    svn(svn_repo, 'add', l[1:].strip())
+  for l in (l for l in status_lines if l.startswith('!')):
+    svn(svn_repo, 'remove', l[1:].strip())
 
   # Now we're ready to commit.
   commit_msg = git('show', '--pretty=%B', '--quiet', rev)
