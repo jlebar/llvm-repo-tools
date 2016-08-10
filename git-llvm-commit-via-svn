@@ -101,7 +101,7 @@ def get_revs_to_push(rev_range):
   # Use git show rather than some plumbing command to figure out which revs are
   # in rev_range because it handles single revs (HEAD^) and ranges (foo..bar)
   # like we want.
-  revs = git('show', '--quiet', '--pretty=%h', rev_range).split('\n')
+  revs = git('show', '--reverse', '--quiet', '--pretty=%h', rev_range).split('\n')
   if not revs:
     raise RuntimeError('Nothing to push: No revs in range %s.' % rev_range)
   return revs
