@@ -179,6 +179,9 @@ def push(svn_repo, rev, dry_run):
 
 
 def run(svn_repo, rev_range, dry_run):
+  # Run from top-level git directory.
+  os.chdir(git('rev-parse', '--show-toplevel'))
+
   revs = get_revs_to_push(rev_range)
   print('Pushing %d commit%s:\n%s' %
         (len(revs), 's' if len(revs) != 1
