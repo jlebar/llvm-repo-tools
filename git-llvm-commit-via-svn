@@ -154,11 +154,8 @@ def push(svn_repo, rev, dry_run):
       tf.write(diff)
       tf.flush()
       tf.seek(0)
-      # Apparently the only thing that sucks more than patch(1) is svn patch.
-      shell(
-          ['patch', '-p2', '--no-backup-if-mismatch', '-r', '-'],
-          cwd=svn_sr_path,
-          stdin=tf)
+      # git is the only thing that can handle its own patches...
+      shell(['git', 'apply', '-p2', '-'], cwd=svn_sr_path, stdin=tf)
 
   status_lines = svn(svn_repo, 'status').split('\n')
 
