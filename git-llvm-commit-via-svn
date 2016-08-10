@@ -147,7 +147,8 @@ def push(svn_repo, rev, dry_run):
     sys.exit(1)
 
   for sr in subrepos:
-    diff = git('show', rev, sr)
+    # Patches must end with '\n', which we strip off.
+    diff = git('show', rev, sr) + '\n'
     svn_sr_path = os.path.join(svn_repo, GIT_TO_SVN_DIR[sr])
     with tempfile.TemporaryFile() as tf:
       tf.write(diff)
