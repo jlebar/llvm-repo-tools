@@ -38,6 +38,7 @@ import os
 import subprocess
 import sys
 import tempfile
+import time
 
 # It's *almost* a straightforward mapping from the monorepo to svn...
 GIT_TO_SVN_DIR = {
@@ -58,6 +59,7 @@ GIT_TO_SVN_DIR = {
 }
 GIT_TO_SVN_DIR.update({'clang': 'cfe/trunk'})
 
+VERBOSE = False
 
 def first_dirname(d):
   while True:
@@ -66,14 +68,22 @@ def first_dirname(d):
       return tail
     d = head
 
+def shell(cmd, strip=True, cwd=None, stdin=None):
+  start = time.time()
+  if VERBOSE:
+    print('%r' % cmd)
 
-def shell(cmd, cwd=None, stdin=None):
-  #print('%r' % cmd)
-  return subprocess.check_output(cmd, cwd=cwd, stdin=stdin).strip()
+  ret = subprocess.check_output(cmd, cwd=cwd, stdin=stdin)
+  if strip:
+    ret = ret.strip()
 
+  elapsed = time.time() - start
+  if VERBOSE and elapsed >= .1:
+    print('Command took %0.1fs' % elapsed)
+  return ret
 
-def git(*cmd):
-  return shell(['git'] + list(cmd))
+def git(*cmd, **kwargs):
+  return shell(['git'] + list(cmd), kwargs.get('strip', True))
 
 
 def svn(cwd, *cmd, **kwargs):
@@ -147,8 +157,7 @@ def push(svn_repo, rev, dry_run):
     sys.exit(1)
 
   for sr in subrepos:
-    # Patches must end with '\n', which we strip off.
-    diff = git('show', rev, sr) + '\n'
+    diff = git('show', rev, sr, strip=False)
     svn_sr_path = os.path.join(svn_repo, GIT_TO_SVN_DIR[sr])
     with tempfile.TemporaryFile() as tf:
       tf.write(diff)
@@ -205,6 +214,12 @@ if __name__ == '__main__':
       'repo, so probably will not work well if you try to commit more '
       'than one rev.')
   parser.add_argument(
+      '-v',
+      '--verbose',
+      dest='verbose',
+      action='store_true',
+      help='Output every external command as we run it.')
+  parser.add_argument(
       'svn_repo',
       metavar='SVN_REPO',
       type=str,
@@ -218,4 +233,5 @@ if __name__ == '__main__':
       "upstream, or not in origin/master if the branch lacks "
       "an explicit upstream)")
   args = parser.parse_args()
+  VERBOSE = args.verbose
   run(svn_repo=args.svn_repo, rev_range=args.rev_range, dry_run=args.dry_run)
